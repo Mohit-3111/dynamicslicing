@@ -62,7 +62,7 @@ def test_runner(directory_pair: Tuple[str, str], capsys):
     session_id = run_analysis(
         f"{module_prefix}.program",
         [
-            f"{module_name}.{ac[0]}:{program_file}"
+            f"{module_name}.{ac[0]};source_path={program_file}"
             for ac in analysis_classes
             if not ac[0].endswith("BaseAnalysis")
         ],
