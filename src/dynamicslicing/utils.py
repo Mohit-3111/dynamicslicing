@@ -32,7 +32,7 @@ class OddIfNegation(m.MatcherDecoratableTransformer):
             test=negated_test,
         )
     
-class LineRemovalByASTManipulaition(m.MatcherDecoratableTransformer):
+class LineRemovalByASTManipulaition(cst.CSTTransformer):
     """
     Excludes specific lines of code based on provided criteria.
     """
@@ -47,17 +47,16 @@ class LineRemovalByASTManipulaition(m.MatcherDecoratableTransformer):
 
     def on_visit(self, node: cst.CSTNode):
         code_location = self.get_metadata(PositionProvider, node)
-        if code_location.start.line in self.lines_to_keep:
+        # Added cst.IndentedBlock to remove RemovalSentinel error while visiting IndentedBlock. Earlier, node's parent does not allow it to be removed.
+        if isinstance(node, cst.IndentedBlock) or code_location.start.line in self.lines_to_keep:
             return True
         
     def on_leave(self, original_node: CSTNodeT, updated_node: CSTNodeT) -> Union[CSTNodeT, cst.RemovalSentinel]:
         code_location = self.get_metadata(PositionProvider, original_node)
-        if code_location.start.line in self.lines_to_keep:
+        # Added cst.IndentedBlock to remove RemovalSentinel error while visiting IndentedBlock. Earlier, node's parent does not allow it to be removed.
+        if isinstance(original_node, cst.IndentedBlock) or code_location.start.line in self.lines_to_keep:
             return updated_node
-        
         return cst.RemoveFromParent()
-    
-
 
 def negate_odd_ifs(code: str) -> str:
     syntax_tree = cst.parse_module(code)

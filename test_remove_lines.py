@@ -1,4 +1,4 @@
-from dynamicslicing.utils import remove_lines
+from dynamicslicing import utils
 
 code = """def slice_me():
     x = 5
@@ -13,6 +13,6 @@ slice_me()
 
 lines_to_keep = [1, 2, 4, 5, 9]
 
-reduced_code = remove_lines(code, lines_to_keep)
+reduced_code = utils.remove_lines(code, lines_to_keep)
 
 print(reduced_code)
